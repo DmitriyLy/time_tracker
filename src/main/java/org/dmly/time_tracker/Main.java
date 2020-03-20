@@ -1,6 +1,9 @@
 package org.dmly.time_tracker;
 
 import org.dmly.time_tracker.constants.Constants;
+import org.dmly.time_tracker.dispatchers.Dispatcher;
+import org.dmly.time_tracker.dispatchers.impl.ConfigModeDispatcher;
+import org.dmly.time_tracker.dispatchers.impl.TrackingModeDispatcher;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,7 +18,6 @@ import java.util.stream.Collectors;
 public class Main {
 
     private final Path configFilePath;
-    private final String workingDirectory;
     private final List<String> cmdArguments;
 
     private Properties properties = new Properties();
@@ -26,8 +28,7 @@ public class Main {
     }
 
     public Main(String[] args) {
-        workingDirectory = System.getProperty("user.dir");
-        configFilePath = Paths.get(workingDirectory, Constants.CONFIG_FILE_NAME).toAbsolutePath();
+        configFilePath = Paths.get(System.getProperty("user.dir"), Constants.CONFIG_FILE_NAME).toAbsolutePath();
         cmdArguments = Arrays.stream(args).collect(Collectors.toList());
     }
 
@@ -48,26 +49,20 @@ public class Main {
             throw new RuntimeException("Cannot read properties.", e);
         }
 
-        if (cmdArguments.size() > 0 && cmdArguments.get(0).equals(Constants.CONFIG_MODE_CMD_KEY)) {
-            startConfigMode();
-        } else {
-            startTrackingMode();
-        }
+        createDispatcher().dispatch();
 
     }
 
     private void readPropertiesFromFile() throws IOException {
         FileInputStream inputStream = new FileInputStream(configFilePath.toFile());
         properties.load(inputStream);
-        System.out.println(properties);
     }
 
-    private void startConfigMode() {
-
-    }
-
-    private void startTrackingMode() {
-
+    private Dispatcher createDispatcher() {
+        if (cmdArguments.size() > 0 && cmdArguments.get(0).equals(Constants.CONFIG_MODE_CMD_KEY)) {
+            return new ConfigModeDispatcher(configFilePath, cmdArguments, properties);
+        }
+        return new TrackingModeDispatcher(configFilePath, cmdArguments, properties);
     }
 
 }
