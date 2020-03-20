@@ -1,5 +1,7 @@
 package org.dmly.time_tracker;
 
+import org.dmly.time_tracker.constants.Constants;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,12 +13,6 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 public class Main {
-
-    private static final String CONFIG_FILE_NAME = "config.property";
-
-    private static final String INTERVAL_PROPERTY_NAME = "main.interval";
-
-    private static final String CONFIG_MODE_CMD_KEY = "--config";
 
     private final Path configFilePath;
     private final String workingDirectory;
@@ -31,7 +27,7 @@ public class Main {
 
     public Main(String[] args) {
         workingDirectory = System.getProperty("user.dir");
-        configFilePath = Paths.get(workingDirectory, CONFIG_FILE_NAME).toAbsolutePath();
+        configFilePath = Paths.get(workingDirectory, Constants.CONFIG_FILE_NAME).toAbsolutePath();
         cmdArguments = Arrays.stream(args).collect(Collectors.toList());
     }
 
@@ -40,7 +36,7 @@ public class Main {
             System.out.println("Configuration file not found. Creating...");
             try {
                 Files.createFile(configFilePath);
-                Files.write(configFilePath, ("#Time tracker props.\n" + INTERVAL_PROPERTY_NAME + "=10m").getBytes());
+                Files.write(configFilePath, ("#Time tracker props.\n" + Constants.INTERVAL_PROPERTY_NAME + "=10m").getBytes());
             } catch (IOException e) {
                 throw new RuntimeException("Cannot create new configuration file.", e);
             }
@@ -52,7 +48,7 @@ public class Main {
             throw new RuntimeException("Cannot read properties.", e);
         }
 
-        if (cmdArguments.size() > 0 && cmdArguments.get(0).equals(CONFIG_MODE_CMD_KEY)) {
+        if (cmdArguments.size() > 0 && cmdArguments.get(0).equals(Constants.CONFIG_MODE_CMD_KEY)) {
             startConfigMode();
         } else {
             startTrackingMode();
