@@ -9,5 +9,6 @@ public interface Constants {
     String FINISH_SOUND_PROPERTY_NAME = "sound.file.finish";
 
     String CONFIG_MODE_CMD_KEY = "--config";
+    String SET_PROPERTY_CMD_KEY = "--set";
 
 }
