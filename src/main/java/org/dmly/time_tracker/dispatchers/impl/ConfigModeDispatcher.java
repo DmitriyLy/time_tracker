@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 public class ConfigModeDispatcher extends AbstractDispatcher {
@@ -15,6 +16,9 @@ public class ConfigModeDispatcher extends AbstractDispatcher {
 
     @Override
     public void dispatch() {
+        if (Objects.isNull(cmdArguments)) {
+            throw new RuntimeException("Arguments list is null");
+        }
         if (cmdArguments.size() > 1 && cmdArguments.get(1) .equals(Constants.SET_PROPERTY_CMD_KEY)) {
             addProperty();
             saveProperties();
