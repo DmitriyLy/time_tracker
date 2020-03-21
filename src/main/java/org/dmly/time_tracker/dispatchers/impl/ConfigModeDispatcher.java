@@ -16,9 +16,19 @@ public class ConfigModeDispatcher extends AbstractDispatcher {
 
     @Override
     public void dispatch() {
+
+        if (Objects.isNull(configFilePath)) {
+            throw new RuntimeException("Config path is null");
+        }
+
         if (Objects.isNull(cmdArguments)) {
             throw new RuntimeException("Arguments list is null");
         }
+
+        if (Objects.isNull(properties)) {
+            throw new RuntimeException("Properties is null");
+        }
+
         if (cmdArguments.size() > 1 && cmdArguments.get(1) .equals(Constants.SET_PROPERTY_CMD_KEY)) {
             addProperty();
             saveProperties();
@@ -34,8 +44,7 @@ public class ConfigModeDispatcher extends AbstractDispatcher {
     }
 
     private void saveProperties() {
-        try {
-            FileOutputStream outputStream = new FileOutputStream(configFilePath.toFile());
+        try (FileOutputStream outputStream = new FileOutputStream(configFilePath.toFile())) {
             properties.store(outputStream, "");
         } catch (IOException e) {
             throw new RuntimeException("Cannot save properties.", e);
