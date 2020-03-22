@@ -1,8 +1,10 @@
 package org.dmly.time_tracker;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dmly.time_tracker.constants.Constants;
 import org.dmly.time_tracker.dispatchers.Dispatcher;
 import org.dmly.time_tracker.dispatchers.impl.ConfigModeDispatcher;
+import org.dmly.time_tracker.dispatchers.impl.HelpModeDispatcher;
 import org.dmly.time_tracker.dispatchers.impl.TrackingModeDispatcher;
 
 import java.io.FileInputStream;
@@ -59,8 +61,15 @@ public class Main {
     }
 
     private Dispatcher createDispatcher() {
-        if (cmdArguments.size() > 0 && cmdArguments.get(0).equals(Constants.CONFIG_MODE_CMD_KEY)) {
-            return new ConfigModeDispatcher(configFilePath, cmdArguments, properties);
+        if (cmdArguments.size() > 0) {
+            String arg = StringUtils.defaultIfEmpty(cmdArguments.get(0), StringUtils.EMPTY);
+            if (arg.equals(Constants.CONFIG_MODE_CMD_KEY)) {
+                return new ConfigModeDispatcher(configFilePath, cmdArguments, properties);
+            } else if (arg.equals(Constants.HELP_MODE_CMD_KEY)) {
+                return new HelpModeDispatcher();
+            } else {
+                throw new RuntimeException("Unexpected argument: " + arg);
+            }
         }
         return new TrackingModeDispatcher(configFilePath, cmdArguments, properties);
     }

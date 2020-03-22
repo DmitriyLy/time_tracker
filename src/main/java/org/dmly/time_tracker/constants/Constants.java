@@ -10,5 +10,6 @@ public interface Constants {
 
     String CONFIG_MODE_CMD_KEY = "--config";
     String SET_PROPERTY_CMD_KEY = "--set";
+    String HELP_MODE_CMD_KEY = "--help";
 
 }
